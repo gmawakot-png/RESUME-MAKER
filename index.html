@@ -249,9 +249,84 @@ table.data-table th{background:#edf8fc;color:#173b57}
 </div>
 </div>
 
+<!-- Hobbies & Interests Section Panel -->
+<div class="panel no-print">
+<div class="title">6. Hobbies & Interests (रूचि - ऐच्छिक)</div>
+<div class="grid">
+  <div class="full">
+    <label>Main Heading Name (मुख्य नाम चुनिए)</label>
+    <select id="hobbyHeadingSelect" onchange="hobbyHeadingChanged()">
+      <option value="HOBBIES & INTERESTS" selected>HOBBIES & INTERESTS</option>
+      <option value="HOBBIES">HOBBIES</option>
+      <option value="EXTRA-CURRICULAR ACTIVITIES">EXTRA-CURRICULAR ACTIVITIES</option>
+      <option value="PERSONAL INTERESTS">PERSONAL INTERESTS</option>
+      <option value="PASTIMES">PASTIMES</option>
+      <option value="Custom">Custom Title (अपनी पसंद का मुख्य नाम लिखें)...</option>
+    </select>
+    <input id="hobbyHeadingCustom" placeholder="यहाँ अपना पसंदीदा मुख्य नाम लिखें..." style="display:none; margin-top:6px;" oninput="update()">
+  </div>
+
+  <div>
+    <label>Hobby Box 1 (चुनें - एक से ज्यादा बार चुन सकते हैं)</label>
+    <select id="hobbySelect1" onchange="addHobbyFromSelect('hobbySelect1', 'hobbyInput1')">
+      <option value="">-- इसमें से रूचियाँ चुनें --</option>
+      <option value="Cricket">Cricket</option>
+      <option value="Playing Badminton">Playing Badminton</option>
+      <option value="Volleyball">Volleyball</option>
+      <option value="Football">Football</option>
+      <option value="Listening to Music">Listening to Music</option>
+      <option value="Reading Books">Reading Books</option>
+      <option value="Cooking">Cooking</option>
+      <option value="Travelling">Travelling</option>
+      <option value="Gardening">Gardening</option>
+      <option value="Photography">Photography</option>
+    </select>
+    <input id="hobbyInput1" placeholder="Box 1 की चुनी हुई रूचियाँ यहाँ जुड़ेंगी..." style="margin-top:6px;" oninput="update()">
+  </div>
+
+  <div>
+    <label>Hobby Box 2 (सामने वाला ड्रॉपडाउन - चुनें)</label>
+    <select id="hobbySelect2" onchange="addHobbyFromSelect('hobbySelect2', 'hobbyInput2')">
+      <option value="">-- इसमें से रूचियाँ चुनें --</option>
+      <option value="Swimming">Swimming</option>
+      <option value="Drawing & Painting">Drawing & Painting</option>
+      <option value="Fitness & Gym">Fitness & Gym</option>
+      <option value="Yoga & Meditation">Yoga & Meditation</option>
+      <option value="Cycling">Cycling</option>
+      <option value="Playing Chess">Playing Chess</option>
+      <option value="Watching Movies">Watching Movies</option>
+      <option value="Video Gaming">Video Gaming</option>
+      <option value="Writing & Blogging">Writing & Blogging</option>
+      <option value="Social Work">Social Work</option>
+    </select>
+    <input id="hobbyInput2" placeholder="Box 2 की चुनी हुई रूचियाँ यहाँ जुड़ेंगी..." style="margin-top:6px;" oninput="update()">
+  </div>
+
+  <div class="full">
+    <label>Other Custom Hobbies (कोई अन्य अतिरिक्त रूचियाँ लिखना चाहें)</label>
+    <input id="hobbyCustomText" placeholder="जैसे: Playing Cricket, Listening to Music, Cooking..." oninput="update()">
+  </div>
+</div>
+</div>
+
+<!-- Custom / Blank Section Panel -->
+<div class="panel no-print">
+<div class="title">7. Custom Section (ऐच्छिक / Blank Field)</div>
+<div class="grid">
+  <div>
+    <label>Custom Title / Heading (शीर्षक)</label>
+    <input id="customTitle" placeholder="जैसे: STRENGTHS, PROJECTS, ACHIEVEMENTS..." oninput="update()">
+  </div>
+  <div class="full">
+    <label>Custom Content / Details (विवरण)</label>
+    <textarea id="customContent" placeholder="यहाँ अपनी इच्छानुसार कोई भी अतिरिक्त जानकारी या विवरण लिखें..." oninput="update()"></textarea>
+  </div>
+</div>
+</div>
+
 <!-- Actions Details -->
 <div class="panel no-print">
-<div class="title">6. Resume Details & Actions</div>
+<div class="title">8. Resume Details & Actions</div>
 <div class="grid">
   <div><label>Date</label><input id="date" type="date" onchange="update()"></div>
   <div><label>Place</label><input id="place" oninput="update()"></div>
@@ -289,6 +364,18 @@ table.data-table th{background:#edf8fc;color:#173b57}
     <div class="rsection" id="sec-experience">
       <h3>WORK EXPERIENCE</h3>
       <div id="rexperience"></div>
+    </div>
+
+    <!-- HOBBIES SECTION (OPTIONAL) -->
+    <div class="rsection" id="sec-hobbies" style="display:none;">
+      <h3 id="rhobbyTitle">HOBBIES & INTERESTS</h3>
+      <p id="rhobbies"></p>
+    </div>
+
+    <!-- CUSTOM / BLANK SECTION (OPTIONAL) -->
+    <div class="rsection" id="sec-custom" style="display:none;">
+      <h3 id="rcustomTitle">ADDITIONAL INFORMATION</h3>
+      <p id="rcustomContent" style="white-space: pre-line;"></p>
     </div>
     
     <div class="rsection" id="sec-personal">
@@ -440,6 +527,37 @@ function toggleExpStatus(){
   update();
 }
 
+function hobbyHeadingChanged(){
+  let sel = v("hobbyHeadingSelect");
+  let custInput = document.getElementById("hobbyHeadingCustom");
+  if(sel === "Custom"){
+    custInput.style.display = "block";
+  } else {
+    custInput.style.display = "none";
+  }
+  update();
+}
+
+// Multi-select append function for Hobbies
+function addHobbyFromSelect(selectId, inputId) {
+  let sel = document.getElementById(selectId);
+  let inp = document.getElementById(inputId);
+  let val = sel.value;
+
+  if (val) {
+    if (inp.value.trim() === "") {
+      inp.value = val;
+    } else {
+      let currentVals = inp.value.split(',').map(s => s.trim());
+      if (!currentVals.includes(val)) {
+        inp.value = inp.value.trim() + ", " + val;
+      }
+    }
+    sel.selectedIndex = 0; // Dropdown reset so user can select again
+    update();
+  }
+}
+
 function updateDeptList(){
   let ind = v("industry");
   let dl = document.getElementById("deptList");
@@ -463,7 +581,7 @@ function industryChanged(){
   update();
 }
 
-function rowEdu(deg="10th",board="UK Board",year="2008",marks=""){
+function rowEdu(deg="",board="",year="",marks=""){
  let x=document.createElement("div"); x.className="rows edu-row";
  x.innerHTML=`<input class="edu-deg" placeholder="Degree / Qualification (e.g. 10th / B.A.)" value="${esc(deg)}" oninput="update()">`+
              `<input class="edu-board" placeholder="Board / University (e.g. UK Board / CBSE)" value="${esc(board)}" oninput="update()">`+
@@ -547,6 +665,34 @@ function update(){
  
  document.getElementById("rdate").textContent=formatDate(v("date")) || "—";
  document.getElementById("rplace").textContent=toTitleCase(v("place")) || "—";
+
+ // Hobbies Logic (Optional - Dynamic Show/Hide & Multi-item join)
+ let hHeadSel = v("hobbyHeadingSelect");
+ let hHeading = (hHeadSel === "Custom") ? (v("hobbyHeadingCustom") || "HOBBIES & INTERESTS") : hHeadSel;
+ 
+ let hList = [];
+ if(v("hobbyInput1")) hList.push(v("hobbyInput1"));
+ if(v("hobbyInput2")) hList.push(v("hobbyInput2"));
+ if(v("hobbyCustomText")) hList.push(v("hobbyCustomText"));
+
+ if(hList.length > 0) {
+   document.getElementById("rhobbyTitle").textContent = hHeading.toUpperCase();
+   document.getElementById("rhobbies").textContent = hList.join(", ");
+   document.getElementById("sec-hobbies").style.display = "block";
+ } else {
+   document.getElementById("sec-hobbies").style.display = "none";
+ }
+
+ // Custom Section Logic (Optional - Dynamic Show/Hide)
+ let cTitle = v("customTitle");
+ let cContent = v("customContent");
+ if(cTitle || cContent){
+   document.getElementById("rcustomTitle").textContent = (cTitle || "ADDITIONAL INFORMATION").toUpperCase();
+   document.getElementById("rcustomContent").textContent = cContent;
+   document.getElementById("sec-custom").style.display = "block";
+ } else {
+   document.getElementById("sec-custom").style.display = "none";
+ }
 
  // Expanded Academic Qualifications Sentence Builder
  let eduHtml="";
@@ -720,7 +866,7 @@ function saveWord(){
 
 // Initial Setup
 industryChanged();
-document.getElementById("edu").appendChild(rowEdu("10th", "UK Board", "2008", ""));
+document.getElementById("edu").appendChild(rowEdu("", "", "", ""));
 addTraining();
 document.getElementById("date").valueAsDate=new Date();
 update();
